@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { getStoredJobApplication, saveJobApplication } from '../../Utility/localStorage';
 
 const AppliedJobs = () => {
     // na chaiteo amra shob data peye jabo
     const jobs = useLoaderData()
+
+    const [appliedJobs, setAppliedJobs]=useState([])
+
     // jei jei data gula stored ase shegula dorkar. jehetu baire thke data load korbo tai side effect ase, use korbo useeffect. and jobs er data ta check korbo
     useEffect(() => {
         //id ta pabo
@@ -19,7 +22,12 @@ const AppliedJobs = () => {
             // jobsApplied er man passe na bcz jobs er id ase integer e , storeJobIds e id gula passi string hishebe tai
             //solution holo: storedJobIds er man integer kore deya so JobDetails e jeye getStored er id take integer boshay dile hoye jabe.
             // console.log(jobs, storedJobIds, jobsApplied)
+
+
             //2nd options
+            /**
+              storedJobIds joto gula id store ase loop kore protita id er jonno jobs theke id take khujbo, mane 1ta id er jonono 1ta khujbo, jodi match kore peye jai tahole jobsApplied e push kore dibo
+             */
             const  jobsApplied = [] ;
             for(const id of storedJobIds){
                 const job = jobs.find(job => job.id === id)
@@ -27,14 +35,24 @@ const AppliedJobs = () => {
                     jobsApplied.push(job)
                 }
             }
-            console.log(jobs, storedJobIds, jobsApplied)
+            // console.log(jobs, storedJobIds, jobsApplied)
+            // ekhon jobsApplied ke dynamically dekhate chaile 1ta state declare kore tar moddhe pathay dile man gula state e peye jabo
+            setAppliedJobs(jobsApplied)
         }
 
     },[] )
 
     return (
         <div>
-            <h2>I applied for this job</h2>
+            <h2 className='text-5xl font-extrabold text-center'>Jobs I applied : {appliedJobs.length} </h2>
+
+            <ul>
+                {
+                    appliedJobs.map((job, idx ) => <li key={idx}>
+                        <span>{job.job_title} {job.company_name}</span>
+                    </li>)
+                }
+            </ul>
         </div>
     );
 };
